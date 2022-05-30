@@ -42,10 +42,10 @@ steps:
 
 
 
-
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
+    mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
     goals: 'install'
     publishJUnitResults: false
     javaHomeOption: 'JDKVersion'
