@@ -18,7 +18,9 @@ steps:
 
 - task: CmdLine@2
   inputs:
-    script: 'ls -l'
+    script: |
+      ls -l
+      ./mvnw install
 
 
 
