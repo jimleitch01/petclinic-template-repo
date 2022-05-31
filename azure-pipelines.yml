@@ -6,23 +6,17 @@
 trigger:
 - none
 
-
 variables:
   MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2/repository
   MAVEN_OPTS: '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
-
-
 
 pool:
   vmImage: ubuntu-latest
 
 steps:
 
-
-
-
-
 - task: Cache@2
+  displayName: setMavenCache
   inputs:
     key: 'maven | "$(Agent.OS)" | **/pom.xml'
     restoreKeys: |
@@ -32,14 +26,24 @@ steps:
   displayName: Cache Maven local repo
 
 
+# - task: CmdLine@2
+#   inputs:
+#     script: |
+#       ls -l
+#       ./mvnw install
 
-
-- task: CmdLine@2
+- task: Maven@3
+  displayName: initialBuild
   inputs:
-    script: |
-      ls -l
-      ./mvnw install
-
+    mavenPomFile: 'pom.xml'
+    mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
+    goals: 'package'
+    publishJUnitResults: false
+    javaHomeOption: 'JDKVersion'
+    mavenVersionOption: 'Default'
+    mavenAuthenticateFeed: false
+    effectivePomSkip: false
+    sonarQubeRunAnalysis: false
 
 
 - task: Maven@3
@@ -53,12 +57,3 @@ steps:
     mavenAuthenticateFeed: false
     effectivePomSkip: false
     sonarQubeRunAnalysis: false
-
-
-
-
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
